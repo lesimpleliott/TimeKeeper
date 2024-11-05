@@ -1,13 +1,25 @@
 import { TaskType } from "@/types/task";
 import mongoose, { Schema } from "mongoose";
 
-const TaskSchema: Schema = new Schema({
-  title: { type: String, required: true },
-  description: { type: String },
-  start: { type: Date, required: true },
-  end: { type: Date },
-  tags: [{ type: String }],
-});
+const taskSchema: Schema = new Schema(
+  {
+    title: { type: String, required: true },
+    description: { type: String },
+    start: { type: Date, required: true },
+    end: { type: Date },
+    tags: { type: [String], required: true },
+  },
+  {
+    timestamps: true,
+    toJSON: {
+      transform: (doc, ret) => {
+        ret.id = ret._id; // Ajouter `id` avec la valeur de `_id`
+        delete ret._id; // Supprimer `_id`
+        delete ret.__v; // Supprimer `__v`
+      },
+    },
+  },
+);
 
 export default mongoose.models.Task ||
-  mongoose.model<TaskType>("Task", TaskSchema);
+  mongoose.model<TaskType>("Task", taskSchema);
