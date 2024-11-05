@@ -5,7 +5,7 @@ export type TaskType = {
   id?: string;
   title: string;
   description?: string;
-  start: Date;
-  end?: Date;
+  start: string;
+  end?: string;
   tags: string[];
 };
