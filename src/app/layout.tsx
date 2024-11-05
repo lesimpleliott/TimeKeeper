@@ -1,4 +1,4 @@
-import Navbar from "@/components/Navbar";
+import Navbar from "@/layouts/Navbar";
 import type { Metadata } from "next";
 import "../styles/globals.css";
 
@@ -14,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
-      <body>
+      <body className="bg-zinc-100 px-4">
         <Navbar />
         <main>{children}</main>
       </body>
