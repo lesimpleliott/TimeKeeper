@@ -3,7 +3,7 @@ import mongoose, { Schema } from "mongoose";
 
 const taskSchema: Schema = new Schema(
   {
-    title: { type: String },
+    title: { type: String, required: true },
     description: { type: String },
     start: { type: Date, required: true },
     end: { type: Date },

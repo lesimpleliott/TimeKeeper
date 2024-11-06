@@ -1,4 +1,4 @@
-import Task from "@/models/Task";
+import Task from "@/models/taskSchema";
 import { TaskType } from "@/types/task";
 import dbConnect from "@/utils/dbConnect";
 import { NextResponse } from "next/server";
@@ -76,11 +76,20 @@ export async function PUT(
 // Fonction DELETE pour supprimer une tâche par ID
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } },
+  context: { params: { id: string } },
 ) {
   try {
     await dbConnect();
-    const deletedTask = await Task.findByIdAndDelete(params.id);
+
+    const { id } = context.params;
+    if (!id) {
+      return NextResponse.json(
+        { success: false, message: "Task ID is missing" },
+        { status: 400 },
+      );
+    }
+
+    const deletedTask = await Task.findByIdAndDelete(id);
 
     if (!deletedTask) {
       return NextResponse.json(

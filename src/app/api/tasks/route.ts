@@ -1,4 +1,4 @@
-import Task from "@/models/Task";
+import Task from "@/models/taskSchema";
 import dbConnect from "@/utils/dbConnect";
 import { NextResponse } from "next/server";
 

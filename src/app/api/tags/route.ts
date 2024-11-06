@@ -1,4 +1,4 @@
-import Tag from "@/models/Tag";
+import Tag from "@/models/tagSchema";
 import dbConnect from "@/utils/dbConnect";
 import { NextResponse } from "next/server";
 
