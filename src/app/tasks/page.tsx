@@ -1,21 +1,13 @@
 "use client";
 
 import TaskCard from "@/components/TaskCard";
-import { fetchTasks } from "@/services/taskServices"; // Import de la fonction
-import { TaskType } from "@/types/task";
-import { useEffect, useState } from "react";
+import { useTasks } from "@/hooks/swr/useTasks";
 
 export default function Tasks() {
-  const [tasks, setTasks] = useState<TaskType[]>([]);
+  const { tasks, isLoading, isError, mutate } = useTasks(); // Utilisation du hook personnalisé
 
-  useEffect(() => {
-    const getTasks = async () => {
-      const fetchedTasks = await fetchTasks();
-      setTasks(fetchedTasks);
-    };
-
-    getTasks();
-  }, []);
+  if (isError) return <div>Erreur lors du chargement des tâches.</div>;
+  if (isLoading) return <div>Chargement...</div>;
 
   return (
     <section className="flex flex-col divide-y">
@@ -24,7 +16,7 @@ export default function Tasks() {
           (a, b) => new Date(b.start).getTime() - new Date(a.start).getTime(),
         )
         .map((task) => (
-          <TaskCard key={task.id} {...task} />
+          <TaskCard key={task.id} {...task} mutate={mutate} />
         ))}
     </section>
   );

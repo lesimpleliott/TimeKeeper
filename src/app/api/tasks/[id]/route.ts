@@ -81,7 +81,7 @@ export async function DELETE(
   try {
     await dbConnect();
 
-    const { id } = context.params;
+    const { id } = await context.params;
     if (!id) {
       return NextResponse.json(
         { success: false, message: "Task ID is missing" },
