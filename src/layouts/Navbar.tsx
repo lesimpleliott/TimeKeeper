@@ -1,11 +1,25 @@
 "use client";
 
+import { useTaskHandlers } from "@/hooks/swr/useTaskHandlers";
+import { useTasks } from "@/hooks/swr/useTasks";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const Navbar = () => {
   const pathname = usePathname();
+  const { mutate } = useTasks(); // Hook pour accéder au mutate
+  const { handleCreateTask } = useTaskHandlers(mutate); // Injecte mutate dans handleCreateTask
+
+  const startNewTask = async () => {
+    try {
+      // Créer une nouvelle tâche avec un titre par défaut et la date actuelle
+      await handleCreateTask("Nouvelle tâche", new Date().toISOString());
+      // console.log("Nouvelle tâche créée avec succès !");
+    } catch (error) {
+      console.error("Erreur lors de la création de la tâche :", error);
+    }
+  };
 
   return (
     <header className="flex justify-between py-4">
@@ -42,7 +56,10 @@ const Navbar = () => {
         </Link>
       </nav>
       <div className="flex items-center gap-3">
-        <button className="h-9 rounded-lg bg-blue-500 px-4 text-sm text-white hover:bg-blue-600">
+        <button
+          onClick={startNewTask}
+          className="h-9 rounded-lg bg-blue-500 px-4 text-sm text-white hover:bg-blue-600"
+        >
           Start Timer
         </button>
         <Image
