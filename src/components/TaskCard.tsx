@@ -1,15 +1,10 @@
 import { TaskType } from "@/types/task";
-import { KeyedMutator } from "swr";
 import ActionMenu from "./TaskCard/ActionMenu";
 import CalendarIcon from "./TaskCard/CalendarIcon";
 import TaskHeader from "./TaskCard/TaskHeader";
 import TaskTagList from "./TaskCard/TaskTagList";
 
-type TaskCardProps = TaskType & {
-  mutate: KeyedMutator<TaskType[]>;
-};
-
-const TaskCard = ({ mutate, ...task }: TaskCardProps) => {
+const TaskCard = (task: TaskType) => {
   return (
     <article className="flex justify-between">
       <CalendarIcon date={task.start} />
@@ -19,7 +14,7 @@ const TaskCard = ({ mutate, ...task }: TaskCardProps) => {
         <TaskTagList task={task} />
       </section>
 
-      <ActionMenu taskID={task.id} mutate={mutate} isCompleted={!!task.end} />
+      <ActionMenu taskID={task.id} isCompleted={!!task.end} />
     </article>
   );
 };

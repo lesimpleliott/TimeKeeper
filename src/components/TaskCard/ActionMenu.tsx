@@ -1,17 +1,14 @@
 "use client";
-import { useTaskHandlers } from "@/hooks/swr/useTaskHandlers";
-import { TaskType } from "@/types/task";
+import { useDeleteTaskMutation } from "@/store/tasks/tasksApi";
 import { useEffect, useRef, useState } from "react";
-import { KeyedMutator } from "swr";
 import ActionButton from "./ActionButton";
 
 type ActionMenuProps = {
-  mutate: KeyedMutator<TaskType[]>;
   taskID?: string;
   isCompleted: boolean;
 };
 
-const ActionMenu = ({ taskID, mutate, isCompleted }: ActionMenuProps) => {
+const ActionMenu = ({ taskID, isCompleted }: ActionMenuProps) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const [editMode, setEditMode] = useState(false);
   const toggleEditMode = () => setEditMode(!editMode);
@@ -33,12 +30,13 @@ const ActionMenu = ({ taskID, mutate, isCompleted }: ActionMenuProps) => {
   }, []);
 
   // Fonction pour supprimer une tâche
-  const { handleDeleteTask } = useTaskHandlers(mutate);
+  const [deleteTask] = useDeleteTaskMutation();
   const onDelete = async () => {
     try {
-      await handleDeleteTask(taskID!);
+      await deleteTask(taskID!).unwrap(); // unwrap pour gérer les erreurs
+      console.log(`Task ${taskID} deleted successfully.`);
     } catch (error) {
-      console.error("Erreur lors de la suppression :", error);
+      console.error("Failed to delete task:", error);
     }
   };
 
