@@ -1,19 +1,22 @@
 "use client";
+import { useTaskHandlers } from "@/hooks/swr/useTaskHandlers";
+import { TaskType } from "@/types/task";
 import { useEffect, useRef, useState } from "react";
+import { KeyedMutator } from "swr";
+import ActionButton from "./ActionButton";
 
 type ActionMenuProps = {
-  onView?: () => void;
-  onEdit?: () => void;
-  onDelete?: () => void;
-  onStop?: () => void;
+  mutate: KeyedMutator<TaskType[]>;
+  taskID?: string;
+  isCompleted: boolean;
 };
 
-const ActionMenu = ({ onView, onEdit, onDelete, onStop }: ActionMenuProps) => {
-  const [editMode, setEditMode] = useState(false);
+const ActionMenu = ({ taskID, mutate, isCompleted }: ActionMenuProps) => {
   const menuRef = useRef<HTMLDivElement>(null);
-
+  const [editMode, setEditMode] = useState(false);
   const toggleEditMode = () => setEditMode(!editMode);
 
+  // Fonction pour fermer le menu lors d'un clic en dehors
   useEffect(() => {
     // Fonction pour gérer les clics en dehors du composant
     const handleClickOutside = (event: MouseEvent) => {
@@ -29,13 +32,18 @@ const ActionMenu = ({ onView, onEdit, onDelete, onStop }: ActionMenuProps) => {
     };
   }, []);
 
-  const buttonClasses =
-    "group flex-1 transition-colors duration-200 text-white/90";
-  const iconClasses =
-    "transform transition-transform duration-200 group-hover:scale-110";
+  // Fonction pour supprimer une tâche
+  const { handleDeleteTask } = useTaskHandlers(mutate);
+  const onDelete = async () => {
+    try {
+      await handleDeleteTask(taskID!);
+    } catch (error) {
+      console.error("Erreur lors de la suppression :", error);
+    }
+  };
 
   return (
-    <div className="flex" ref={menuRef}>
+    <section className="flex" ref={menuRef}>
       {/* Bouton pour basculer le mode d'édition */}
       <button
         onClick={(e) => {
@@ -48,52 +56,46 @@ const ActionMenu = ({ onView, onEdit, onDelete, onStop }: ActionMenuProps) => {
       </button>
 
       {/* Section des boutons d'action */}
-      <section
-        className={`flex h-full flex-row-reverse overflow-hidden ${
-          editMode ? "w-36" : "w-0"
-        } ease transition-all duration-500`}
+      <div
+        className={`flex h-full flex-row overflow-hidden ${editMode ? "w-36" : "w-0"} ease transition-all duration-500`}
       >
-        {onView && (
-          <button
-            onClick={onView}
-            className={`bg-blue-500 hover:bg-blue-600 ${buttonClasses}`}
-          >
-            <i className={`fa-solid fa-eye ${iconClasses}`}></i>
-            <p className="text-xs">Voir</p>
-          </button>
+        {/* Bouton commun */}
+        <ActionButton
+          label="Suppr."
+          icon="fa-solid fa-trash-can"
+          color="bg-red-500 hover:bg-red-600"
+          onClick={onDelete}
+        />
+
+        {/* Boutons si la tâche est terminée */}
+        {isCompleted && (
+          <>
+            <ActionButton
+              label="Éditer"
+              icon="fa-solid fa-edit"
+              color="bg-green-500 hover:bg-green-600"
+              onClick={() => console.log("onEdit")}
+            />
+            <ActionButton
+              label="Voir"
+              icon="fa-solid fa-eye"
+              color="bg-blue-500 hover:bg-blue-600"
+              onClick={() => console.log("onView")}
+            />
+          </>
         )}
 
-        {onEdit && (
-          <button
-            onClick={onEdit}
-            className={`bg-green-500 hover:bg-green-600 ${buttonClasses}`}
-          >
-            <i className={`fa-solid fa-edit ${iconClasses}`}></i>
-            <p className="text-xs">Éditer</p>
-          </button>
+        {/* Boutons si la tâche est en cours */}
+        {!isCompleted && (
+          <ActionButton
+            label="Stop"
+            icon="fa-solid fa-stop"
+            color="bg-slate-500 hover:bg-slate-600"
+            onClick={() => console.log("onStop")}
+          />
         )}
-
-        {onStop && (
-          <button
-            onClick={onStop}
-            className={`bg-slate-500 hover:bg-slate-600 ${buttonClasses}`}
-          >
-            <i className={`fa-solid fa-stop ${iconClasses}`}></i>
-            <p className="text-xs">Stop</p>
-          </button>
-        )}
-
-        {onDelete && (
-          <button
-            onClick={onDelete}
-            className={`bg-red-500 hover:bg-red-600 ${buttonClasses}`}
-          >
-            <i className={`fa-solid fa-trash-can ${iconClasses}`}></i>
-            <p className="text-xs">Suppr.</p>
-          </button>
-        )}
-      </section>
-    </div>
+      </div>
+    </section>
   );
 };
 

@@ -1,8 +1,12 @@
 import { getDay, getMonth } from "@/utils/dateParser";
 
-const CalendarIcon = ({ date }: { date: string }) => {
+type CalendarIconProps = {
+  date: string; // Date au format ISO
+};
+
+const CalendarIcon = ({ date }: CalendarIconProps) => {
   return (
-    <section className="my-2 flex select-none flex-col justify-center">
+    <section className="xsm:flex my-2 hidden select-none flex-col justify-center pl-4">
       <div className="h-fit w-10 overflow-hidden rounded-lg shadow">
         <span className="flex h-4 w-full items-center justify-center bg-red-400 text-center text-xs text-white">
           {getMonth(date)}

@@ -22,7 +22,7 @@ const Navbar = () => {
   };
 
   return (
-    <header className="flex justify-between py-4">
+    <header className="flex justify-between py-4 px-4">
       <nav className="flex items-center gap-3">
         <Link
           className={`rounded-md py-1 font-medium ${

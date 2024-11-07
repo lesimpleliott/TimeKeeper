@@ -14,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
-      <body className="bg-zinc-100 px-4">
+      <body className="bg-zinc-100">
         <Navbar />
         <main>{children}</main>
       </body>
